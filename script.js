@@ -67,8 +67,8 @@
     let rows = 42;
     let particles = [];
 
-    // Micro-interaction glyphs (*, +, ×, □, ○)
-    const glyphChars = ['*', '+', '×', '□', '○'];
+    // Micro-interaction glyphs (*, +, ×, □, ○, ✦, ✧)
+    const glyphChars = ['*', '+', '×', '□', '○', '✦', '✧', '•'];
     let glyphs = [];
     let lastGlyphSpawn = 0;
 
@@ -209,37 +209,38 @@
         mouse.vy *= 0.85;
       }
 
-      // Micro-interactions: occasional glyph emission near cursor interaction
+      // Micro-interactions: enhanced glyph emission (*, +, ×, □, ○, ✦, ✧)
       const mouseSpeed = Math.hypot(mouse.vx, mouse.vy);
-      if (mouse.active && mouseSpeed > 0.9 && glyphs.length < 5 && (time - lastGlyphSpawn > 0.35)) {
+      if (mouse.active && mouseSpeed > 0.4 && glyphs.length < 14 && (time - lastGlyphSpawn > 0.14)) {
         const chosenChar = glyphChars[Math.floor(Math.random() * glyphChars.length)];
         glyphs.push({
-          x: mouse.x + (Math.random() - 0.5) * 45,
-          y: mouse.y + (Math.random() - 0.5) * 45,
+          x: mouse.x + (Math.random() - 0.5) * 85,
+          y: mouse.y + (Math.random() - 0.5) * 65,
           char: chosenChar,
-          vx: (Math.random() - 0.5) * 0.3 + mouse.vx * 0.04,
-          vy: -0.28 - Math.random() * 0.3,
+          vx: (Math.random() - 0.5) * 0.75 + mouse.vx * 0.08,
+          vy: -0.45 - Math.random() * 0.55,
           life: 0,
-          maxLife: 60 + Math.floor(Math.random() * 25)
+          maxLife: 85 + Math.floor(Math.random() * 40),
+          size: 13 + Math.floor(Math.random() * 6)
         });
         lastGlyphSpawn = time;
       }
 
       ctx.clearRect(0, 0, width, height);
 
-      // Wave layout configuration: occupies the right side of the hero
+      // Wave layout configuration: expansive width across hero
       const isMobile = width < 768;
-      const waveCenterX = isMobile ? width * 0.52 : width * 0.67;
+      const waveCenterX = isMobile ? width * 0.52 : width * 0.62;
       const waveCenterY = isMobile ? height * 0.52 : height * 0.48;
 
-      const waveSpanX = isMobile ? width * 0.95 : width * 0.82;
-      const waveSpanZ = 720;
+      const waveSpanX = isMobile ? width * 1.15 : width * 1.08;
+      const waveSpanZ = 760;
       const focalLength = 680;
 
       // Spring physics parameters (yielding silk-like data flow)
       const spring = 0.042;
       const damping = 0.88;
-      const influenceRadius = isMobile ? 150 : 210;
+      const influenceRadius = isMobile ? 160 : 230;
 
       const len = particles.length;
 
@@ -331,22 +332,21 @@
         const edgeV = Math.sin(p.v * Math.PI);
         const edgeFade = Math.pow(Math.max(0, edgeU * edgeV), 0.62);
 
-        // Alpha calculation: low contrast, depth modulated, typography remains focus
-        const depthAlpha = 0.08 + 0.32 * Math.min(1.2, Math.max(0.2, scale));
+        // Alpha calculation: depth modulated, crisp definition
+        const depthAlpha = 0.10 + 0.38 * Math.min(1.2, Math.max(0.2, scale));
         const alpha = depthAlpha * edgeFade;
 
         if (alpha > 0.015) {
-          // Particle size: 0.8px to 1.6px
-          const size = Math.max(0.75, (0.65 + scale * 0.65));
+          // Particle size: 0.85px to 1.8px
+          const size = Math.max(0.85, (0.7 + scale * 0.75));
 
           ctx.fillStyle = 'rgba(255, 255, 255, ' + alpha.toFixed(3) + ')';
           ctx.fillRect(projX - size * 0.5, projY - size * 0.5, size, size);
         }
       }
 
-      // Render micro-interaction glyphs (*, +, ×, □, ○)
+      // Render prominent micro-interaction glyphs (*, +, ×, □, ○, ✦, ✧)
       if (glyphs.length > 0) {
-        ctx.font = '10px -apple-system, BlinkMacSystemFont, "Inter", monospace';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
@@ -357,11 +357,18 @@
           item.y += item.vy;
 
           const progress = item.life / item.maxLife;
-          const glyphAlpha = Math.sin(progress * Math.PI) * 0.20;
+          // Substantially increased peak visibility: 0.65 alpha with glowing presence
+          const glyphAlpha = Math.sin(progress * Math.PI) * 0.65;
 
           if (glyphAlpha > 0.01 && item.life < item.maxLife) {
+            ctx.font = '500 ' + item.size + 'px -apple-system, BlinkMacSystemFont, "Inter", monospace';
+            // Subtle glow effect behind the glyph for high visibility against black
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.45)';
+            ctx.shadowBlur = 6;
             ctx.fillStyle = 'rgba(255, 255, 255, ' + glyphAlpha.toFixed(3) + ')';
             ctx.fillText(item.char, item.x, item.y);
+            // Reset shadow
+            ctx.shadowBlur = 0;
           } else {
             glyphs.splice(g, 1);
           }
