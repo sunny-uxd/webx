@@ -797,20 +797,20 @@ button {
   background: #000000;
   color: #ffffff;
   min-height: 100vh;
-  height: 100vh;
+  height: auto;
   display: flex;
   align-items: center;
   overflow: hidden;
   position: relative;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 0;
+  padding: clamp(2.5rem, 4vh, 4rem) 0;
   box-sizing: border-box;
 }
 
 .cases__inner {
   width: 100%;
-  height: 100%;
-  max-height: 100vh;
+  min-height: calc(100vh - clamp(5rem, 8vh, 8rem));
+  max-height: none;
   display: flex;
   gap: clamp(2rem, 3.5vw, 4.5rem);
   padding-left: var(--gutter);
@@ -820,7 +820,7 @@ button {
 /* Left Sidebar */
 .cases__sidebar {
   flex: 0 0 clamp(240px, 18vw, 300px);
-  height: 68%;
+  min-height: 460px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -913,17 +913,19 @@ button {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
+  scroll-behavior: auto;
+  scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   padding-right: var(--gutter);
   padding-top: 1rem;
   padding-bottom: 1rem;
   cursor: grab;
+  user-select: none;
 }
 
-.cases__carousel:active {
+.cases__carousel:active,
+.cases__carousel.is-dragging {
   cursor: grabbing;
 }
 
@@ -940,16 +942,22 @@ button {
 
 /* Bigger Card with Sharp Corners (0 Border Radius) */
 .case-card {
-  flex: 0 0 clamp(540px, 58vw, 960px);
+  flex: 0 0 clamp(540px, 58vw, 980px);
   scroll-snap-align: start;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.case-card:last-child {
+  scroll-snap-align: end;
 }
 
 .case-card__visual {
   position: relative;
   border-radius: 0 !important;
   overflow: hidden;
-  aspect-ratio: 16 / 9.6;
+  aspect-ratio: 16 / 11;
   width: 100%;
   background: #111111;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -962,6 +970,9 @@ button {
   display: block;
   border-radius: 0 !important;
   transition: transform 0.7s var(--ease-out);
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .case-card:hover .case-card__visual img {
@@ -969,27 +980,68 @@ button {
 }
 
 .case-card__meta {
-  padding-top: 1.4rem;
+  padding-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .case-card__tag {
   display: block;
   font-family: var(--font-sans);
-  font-size: 1.05rem;
-  font-weight: 500;
+  font-size: 0.88rem;
+  font-weight: 600;
   color: #888888;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 0.45rem;
+  letter-spacing: 0.12em;
 }
 
 .case-card__title {
   font-family: var(--font-display);
-  font-size: clamp(1.55rem, 2.2vw, 2.3rem);
+  font-size: clamp(1.4rem, 1.85vw, 2.1rem);
   font-weight: 500;
   color: #ffffff;
   letter-spacing: -0.03em;
   line-height: 1.22;
+}
+
+.case-card__desc {
+  font-family: var(--font-sans);
+  font-size: clamp(0.92rem, 1.02vw, 1rem);
+  font-weight: 350;
+  color: #a0a0a0;
+  line-height: 1.62;
+  letter-spacing: -0.01em;
+  max-width: 66ch;
+}
+
+.case-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.55rem;
+  margin-top: 0.35rem;
+}
+
+.case-card__tag-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 999px;
+  color: #999999;
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.case-card:hover .case-card__tag-pill {
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #dddddd;
+  background: rgba(255, 255, 255, 0.07);
 }
 
 /* Floating Navigation Arrows */

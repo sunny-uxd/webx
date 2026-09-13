@@ -708,16 +708,31 @@
 
 
   /* --------------------------------------------------------
-     CASE STUDIES CAROUSEL — Slider navigation & drag
+     CASE STUDIES CAROUSEL — Ultra-Smooth Navigation & Physics
      -------------------------------------------------------- */
 
   const casesCarousel = document.getElementById('casesCarousel');
   const casesPrevBtn = document.getElementById('casesPrevBtn');
   const casesNextBtn = document.getElementById('casesNextBtn');
+  const casesViewAllBtn = document.getElementById('casesViewAllBtn');
 
   if (casesCarousel) {
+    let animRafId = null;
+    let wheelRafId = null;
+    let momentumRafId = null;
+
+    function getMaxScroll() {
+      const cards = casesCarousel.querySelectorAll('.case-card');
+      if (!cards.length) return 0;
+      const lastCard = cards[cards.length - 1];
+      const style = window.getComputedStyle(casesCarousel);
+      const paddingRight = parseFloat(style.paddingRight) || 0;
+      const lastCardRight = lastCard.offsetLeft + lastCard.offsetWidth;
+      return Math.max(0, Math.round(lastCardRight - casesCarousel.clientWidth + paddingRight));
+    }
+
     function updateCarouselButtons() {
-      const maxScroll = casesCarousel.scrollWidth - casesCarousel.clientWidth;
+      const maxScroll = getMaxScroll();
       const currentScroll = casesCarousel.scrollLeft;
 
       if (casesPrevBtn) {
@@ -731,10 +746,26 @@
       }
 
       if (casesNextBtn) {
-        if (currentScroll >= maxScroll - 20) {
+        if (currentScroll >= maxScroll - 15) {
           casesNextBtn.disabled = true;
+          casesNextBtn.style.opacity = '0';
+          casesNextBtn.style.pointerEvents = 'none';
         } else {
           casesNextBtn.disabled = false;
+          casesNextBtn.style.opacity = '1';
+          casesNextBtn.style.pointerEvents = 'auto';
+        }
+      }
+
+      if (casesViewAllBtn) {
+        const span = casesViewAllBtn.querySelector('span');
+        const svg = casesViewAllBtn.querySelector('svg');
+        if (currentScroll >= maxScroll - 30) {
+          if (span) span.textContent = 'Back to Start';
+          if (svg) svg.style.transform = 'rotate(180deg)';
+        } else {
+          if (span) span.textContent = 'View All';
+          if (svg) svg.style.transform = '';
         }
       }
     }
@@ -748,42 +779,203 @@
         const gap = track ? parseFloat(getComputedStyle(track).gap) || 30 : 30;
         return firstCard.offsetWidth + gap;
       }
-      return 460;
+      return 520;
     }
 
+    // High-precision smooth scroll with cubic easing
+    function smoothScrollCarouselTo(targetLeft, duration = 750, onComplete) {
+      if (animRafId) cancelAnimationFrame(animRafId);
+      if (wheelRafId) cancelAnimationFrame(wheelRafId);
+      if (momentumRafId) cancelAnimationFrame(momentumRafId);
+
+      const maxScroll = getMaxScroll();
+      const clampedTarget = Math.max(0, Math.min(maxScroll, targetLeft));
+      const start = casesCarousel.scrollLeft;
+      const distance = clampedTarget - start;
+
+      if (Math.abs(distance) < 2) {
+        if (onComplete) onComplete();
+        return;
+      }
+
+      const startTime = performance.now();
+      casesCarousel.style.scrollSnapType = 'none';
+
+      function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+
+      function step(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = easeInOutCubic(progress);
+        const currentPos = start + distance * ease;
+
+        casesCarousel.scrollLeft = currentPos;
+        updateCarouselButtons();
+
+        if (progress < 1) {
+          animRafId = requestAnimationFrame(step);
+        } else {
+          casesCarousel.scrollLeft = clampedTarget;
+          casesCarousel.style.scrollSnapType = '';
+          updateCarouselButtons();
+          animRafId = null;
+          if (onComplete) onComplete();
+        }
+      }
+
+      animRafId = requestAnimationFrame(step);
+    }
+
+    // Prev / Next button listeners
     if (casesNextBtn) {
-      casesNextBtn.addEventListener('click', function () {
-        casesCarousel.scrollBy({ left: getScrollStep(), behavior: 'smooth' });
+      casesNextBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const maxScroll = getMaxScroll();
+        const nextTarget = Math.min(maxScroll, casesCarousel.scrollLeft + getScrollStep());
+        smoothScrollCarouselTo(nextTarget, 650);
       });
     }
 
     if (casesPrevBtn) {
-      casesPrevBtn.addEventListener('click', function () {
-        casesCarousel.scrollBy({ left: -getScrollStep(), behavior: 'smooth' });
+      casesPrevBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const prevTarget = Math.max(0, casesCarousel.scrollLeft - getScrollStep());
+        smoothScrollCarouselTo(prevTarget, 650);
       });
     }
 
-    // Drag to scroll
+    // View All button: smoothly scrolls across all projects or back to start
+    if (casesViewAllBtn) {
+      casesViewAllBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const maxScroll = getMaxScroll();
+        if (casesCarousel.scrollLeft >= maxScroll - 30) {
+          smoothScrollCarouselTo(0, 1000);
+        } else {
+          smoothScrollCarouselTo(maxScroll, 1200);
+        }
+      });
+    }
+
+    // Smooth horizontal mouse wheel scroll with boundary passthrough
+    let wheelTarget = casesCarousel.scrollLeft;
+    let wheelCurrent = casesCarousel.scrollLeft;
+
+    function renderWheelScroll() {
+      const diff = wheelTarget - wheelCurrent;
+      if (Math.abs(diff) > 0.5) {
+        wheelCurrent += diff * 0.15;
+        casesCarousel.scrollLeft = wheelCurrent;
+        updateCarouselButtons();
+        wheelRafId = requestAnimationFrame(renderWheelScroll);
+      } else {
+        wheelCurrent = wheelTarget;
+        casesCarousel.scrollLeft = wheelCurrent;
+        updateCarouselButtons();
+        casesCarousel.style.scrollSnapType = '';
+        wheelRafId = null;
+      }
+    }
+
+    casesCarousel.addEventListener('wheel', function (e) {
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (Math.abs(delta) < 3) return;
+
+      const maxScroll = getMaxScroll();
+      const current = casesCarousel.scrollLeft;
+
+      // Allow vertical page scroll if at limits
+      const atStart = current <= 2 && delta < 0;
+      const atEnd = current >= maxScroll - 2 && delta > 0;
+
+      if (!atStart && !atEnd) {
+        e.preventDefault();
+        if (animRafId) cancelAnimationFrame(animRafId);
+        if (momentumRafId) cancelAnimationFrame(momentumRafId);
+
+        casesCarousel.style.scrollSnapType = 'none';
+        if (!wheelRafId) {
+          wheelCurrent = current;
+          wheelTarget = current;
+        }
+
+        wheelTarget = Math.max(0, Math.min(maxScroll, wheelTarget + delta * 1.25));
+
+        if (!wheelRafId) {
+          wheelRafId = requestAnimationFrame(renderWheelScroll);
+        }
+      }
+    }, { passive: false });
+
+    // Drag to scroll with natural momentum
     let isDown = false;
     let startX = 0;
-    let initialScrollLeft = 0;
+    let initialScroll = 0;
+    let lastX = 0;
+    let lastTime = 0;
+    let velocityX = 0;
 
     casesCarousel.addEventListener('mousedown', function (e) {
+      if (e.button !== 0) return;
+      if (animRafId) cancelAnimationFrame(animRafId);
+      if (wheelRafId) cancelAnimationFrame(wheelRafId);
+      if (momentumRafId) cancelAnimationFrame(momentumRafId);
+
       isDown = true;
       startX = e.pageX - casesCarousel.offsetLeft;
-      initialScrollLeft = casesCarousel.scrollLeft;
+      initialScroll = casesCarousel.scrollLeft;
+      lastX = e.pageX;
+      lastTime = performance.now();
+      velocityX = 0;
+
+      casesCarousel.style.scrollSnapType = 'none';
+      casesCarousel.classList.add('is-dragging');
     });
 
     window.addEventListener('mouseup', function () {
+      if (!isDown) return;
       isDown = false;
+      casesCarousel.classList.remove('is-dragging');
+
+      if (Math.abs(velocityX) > 0.25) {
+        let currentVelocity = velocityX * 16;
+        function stepMomentum() {
+          currentVelocity *= 0.92;
+          const maxScroll = getMaxScroll();
+          casesCarousel.scrollLeft = Math.max(0, Math.min(maxScroll, casesCarousel.scrollLeft - currentVelocity));
+          updateCarouselButtons();
+
+          if (Math.abs(currentVelocity) > 0.5 && casesCarousel.scrollLeft > 0 && casesCarousel.scrollLeft < maxScroll) {
+            momentumRafId = requestAnimationFrame(stepMomentum);
+          } else {
+            casesCarousel.style.scrollSnapType = '';
+            momentumRafId = null;
+          }
+        }
+        momentumRafId = requestAnimationFrame(stepMomentum);
+      } else {
+        casesCarousel.style.scrollSnapType = '';
+      }
     });
 
     casesCarousel.addEventListener('mousemove', function (e) {
       if (!isDown) return;
       e.preventDefault();
       const x = e.pageX - casesCarousel.offsetLeft;
-      const walk = (x - startX) * 1.5;
-      casesCarousel.scrollLeft = initialScrollLeft - walk;
+      const walk = (x - startX) * 1.3;
+      const maxScroll = getMaxScroll();
+      casesCarousel.scrollLeft = Math.max(0, Math.min(maxScroll, initialScroll - walk));
+
+      const now = performance.now();
+      const dt = now - lastTime;
+      if (dt > 10) {
+        velocityX = (e.pageX - lastX) / dt;
+        lastX = e.pageX;
+        lastTime = now;
+      }
+      updateCarouselButtons();
     });
 
     updateCarouselButtons();
