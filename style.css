@@ -956,7 +956,7 @@ button {
   object-fit: cover;
   object-position: center top;
   display: block;
-  filter: grayscale(100%) contrast(1.05) brightness(0.95);
+  filter: none;
   transform: scale(1);
   border-radius: 0;
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
@@ -967,7 +967,7 @@ button {
 
 .cs-slide__image-wrap:hover .cs-slide__image {
   transform: scale(1.04);
-  filter: grayscale(60%) contrast(1.08) brightness(1);
+  filter: none;
   border-radius: 0 0 0 70px;
 }
 
