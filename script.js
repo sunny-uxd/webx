@@ -776,27 +776,26 @@
           // Zoom out card smoothly from scale(1) down to scale(0.93)
           const scale = 1 - clamped * 0.07;
           const translateY = clamped * -10;
-          const brightness = 1 - clamped * 0.18;
           const radius = clamped * 28;
 
           inner.style.transform = 'scale(' + scale.toFixed(4) + ') translateY(' + translateY.toFixed(1) + 'px)';
-          inner.style.filter = 'brightness(' + brightness.toFixed(3) + ')';
+          inner.style.filter = 'none';
           inner.style.borderRadius = radius.toFixed(1) + 'px';
         } else if (nextRect.top <= stickyTarget) {
           // Fully covered / zoomed out in the background stack
           inner.style.transform = 'scale(0.93) translateY(-10px)';
-          inner.style.filter = 'brightness(0.82)';
+          inner.style.filter = 'none';
           inner.style.borderRadius = '28px';
         } else {
           // Active card in full focus
           inner.style.transform = 'scale(1) translateY(0px)';
-          inner.style.filter = 'brightness(1)';
+          inner.style.filter = 'none';
           inner.style.borderRadius = '0px';
         }
       } else {
         // Last card remains in full scale
         inner.style.transform = 'scale(1) translateY(0px)';
-        inner.style.filter = 'brightness(1)';
+        inner.style.filter = 'none';
         inner.style.borderRadius = '0px';
       }
     });
