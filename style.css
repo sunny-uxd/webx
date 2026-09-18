@@ -889,32 +889,6 @@ button {
   text-align: left;
 }
 
-/* ----- Oversized Background Watermarks ----- */
-
-.casestudies__watermark {
-  position: absolute;
-  font-family: 'Alliance No 2', 'Alliance No.2', var(--font-sans);
-  font-size: clamp(12rem, 22vw, 28rem);
-  font-weight: 800;
-  letter-spacing: -0.05em;
-  color: rgba(255, 255, 255, 0.022);
-  white-space: nowrap;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-  line-height: 1;
-}
-
-.casestudies__watermark--1 {
-  top: 12%;
-  right: -5%;
-}
-
-.casestudies__watermark--2 {
-  bottom: 8%;
-  left: -8%;
-}
-
 /* ----- Carousel Container ----- */
 
 .cs-carousel {
@@ -2436,10 +2410,6 @@ button {
 
   .cs-carousel__arrow--next {
     right: 0.75rem;
-  }
-
-  .casestudies__watermark {
-    font-size: clamp(6rem, 18vw, 14rem);
   }
 
   .cs-carousel__track {
