@@ -2542,20 +2542,35 @@ body.modal-open {
 }
 
 .cs-modal__header-inner {
-  max-width: 1360px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   padding: 1rem var(--gutter);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  box-sizing: border-box;
 }
 
 .cs-modal__header-left {
+  flex: 1 1 0;
   display: flex;
   align-items: center;
-  gap: 1rem;
   min-width: 0;
+}
+
+.cs-modal__header-center {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cs-modal__header-right {
+  flex: 1 1 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .cs-modal__badge {

@@ -1251,14 +1251,6 @@
 
   initTestimonialsSlider();
 
-
-
-
-
-  initTestimonialsSlider();
-
-
-
   /* --------------------------------------------------------
      CASE STUDY FULL-SCREEN MODAL ENGINE & DATA
      -------------------------------------------------------- */
@@ -1267,7 +1259,6 @@
     const modal = document.getElementById('csModal');
     const modalContent = document.getElementById('csModalContent');
     const modalHeaderTitle = document.getElementById('csModalHeaderTitle');
-    const modalBadge = document.getElementById('csModalBadge');
     const modalCounter = document.getElementById('csModalCounter');
     const closeBtn = document.getElementById('csModalCloseBtn');
     const prevBtn = document.getElementById('csModalPrevBtn');
@@ -1537,7 +1528,6 @@
 
       // Update header
       modalHeaderTitle.textContent = data.title;
-      modalBadge.textContent = data.tag;
       modalCounter.textContent = (index + 1) + ' / ' + caseStudiesData.length;
 
       // Build HTML template

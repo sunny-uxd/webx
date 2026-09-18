@@ -1087,29 +1087,32 @@
   <div class="cs-modal" id="csModal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">
     <div class="cs-modal__backdrop" id="csModalBackdrop"></div>
     <div class="cs-modal__scroller" id="csModalScroller">
-      <!-- Fixed/Sticky Navigation Header -->
+      <!-- Fixed/Sticky Navigation Header (100% Full-Width) -->
       <header class="cs-modal__header">
         <div class="cs-modal__header-inner">
           <div class="cs-modal__header-left">
-            <span class="cs-modal__badge" id="csModalBadge">CASE STUDY</span>
             <span class="cs-modal__header-title" id="csModalHeaderTitle">Project Title</span>
           </div>
-          <div class="cs-modal__header-nav">
-            <button class="cs-modal__nav-btn" id="csModalPrevBtn" aria-label="Previous Case Study">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-              <span>Prev</span>
-            </button>
-            <span class="cs-modal__nav-counter" id="csModalCounter">1 / 5</span>
-            <button class="cs-modal__nav-btn" id="csModalNextBtn" aria-label="Next Case Study">
-              <span>Next</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <div class="cs-modal__header-center">
+            <div class="cs-modal__header-nav">
+              <button class="cs-modal__nav-btn" id="csModalPrevBtn" aria-label="Previous Case Study">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span>Prev</span>
+              </button>
+              <span class="cs-modal__nav-counter" id="csModalCounter">1 / 5</span>
+              <button class="cs-modal__nav-btn" id="csModalNextBtn" aria-label="Next Case Study">
+                <span>Next</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="cs-modal__header-right">
+            <button class="cs-modal__close-btn" id="csModalCloseBtn" aria-label="Close Case Study Detail (Esc)">
+              <span>Close</span>
+              <span class="cs-modal__esc-badge">ESC</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
           </div>
-          <button class="cs-modal__close-btn" id="csModalCloseBtn" aria-label="Close Case Study Detail (Esc)">
-            <span>Close</span>
-            <span class="cs-modal__esc-badge">ESC</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
         </div>
       </header>
 
