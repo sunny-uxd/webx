@@ -26,8 +26,6 @@
     lastScrollY = scrollY;
   }
 
-  window.addEventListener('scroll', handleNavScroll, { passive: true });
-
   // Mobile toggle
   navToggle.addEventListener('click', function () {
     const expanded = this.getAttribute('aria-expanded') === 'true';
@@ -482,8 +480,6 @@
     });
   }
 
-  window.addEventListener('scroll', highlightActiveSection, { passive: true });
-
 
   /* --------------------------------------------------------
      CURSOR TRACKER — Subtle cursor interaction (desktop only)
@@ -515,6 +511,204 @@
 
 
   /* --------------------------------------------------------
+     SERVICE CARDS — Reveal animation on scroll
+     -------------------------------------------------------- */
+
+  if (!prefersReducedMotion) {
+    const svcCards = document.querySelectorAll('.svc-card');
+
+    const svcObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('svc-card--visible');
+            svcObserver.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.05,
+        rootMargin: '0px 0px -20px 0px'
+      }
+    );
+
+    svcCards.forEach(function (card) {
+      svcObserver.observe(card);
+    });
+  }
+
+
+  /* --------------------------------------------------------
+     CASE STUDIES — Full-Screen Carousel with Autoplay
+     -------------------------------------------------------- */
+
+  function initCaseStudyCarousel() {
+    var carousel = document.getElementById('csCarousel');
+    if (!carousel) return;
+
+    var slides = carousel.querySelectorAll('.cs-slide');
+    var dots = carousel.querySelectorAll('.cs-carousel__dot');
+    var prevBtn = document.getElementById('csCarouselPrev');
+    var nextBtn = document.getElementById('csCarouselNext');
+
+    if (slides.length === 0) return;
+
+    var currentIndex = 0;
+    var totalSlides = slides.length;
+    var autoplayInterval = null;
+    var autoplayDelay = 5000; // 5 seconds
+    var isHovered = false;
+
+    // Initialize first slide
+    slides[0].classList.add('cs-slide--active');
+
+    function goToSlide(index) {
+      if (index === currentIndex) return;
+
+      // Remove active from current
+      slides[currentIndex].classList.remove('cs-slide--active');
+      dots[currentIndex].classList.remove('cs-carousel__dot--active');
+
+      // Reset progress animation on old dot
+      var oldProgress = dots[currentIndex].querySelector('.cs-carousel__dot-progress');
+      if (oldProgress) {
+        oldProgress.style.animation = 'none';
+        oldProgress.offsetHeight; // trigger reflow
+        oldProgress.style.animation = '';
+      }
+
+      // Set new active
+      currentIndex = index;
+      slides[currentIndex].classList.add('cs-slide--active');
+      dots[currentIndex].classList.add('cs-carousel__dot--active');
+
+      // Restart progress animation on new dot
+      var newProgress = dots[currentIndex].querySelector('.cs-carousel__dot-progress');
+      if (newProgress) {
+        newProgress.style.animation = 'none';
+        newProgress.offsetHeight; // trigger reflow
+        newProgress.style.animation = 'csAutoplayProgress ' + (autoplayDelay / 1000) + 's linear forwards';
+      }
+    }
+
+    function nextSlide() {
+      var next = (currentIndex + 1) % totalSlides;
+      goToSlide(next);
+    }
+
+    function prevSlide() {
+      var prev = (currentIndex - 1 + totalSlides) % totalSlides;
+      goToSlide(prev);
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+      autoplayInterval = setInterval(function () {
+        if (!isHovered) {
+          nextSlide();
+        }
+      }, autoplayDelay);
+    }
+
+    function stopAutoplay() {
+      if (autoplayInterval) {
+        clearInterval(autoplayInterval);
+        autoplayInterval = null;
+      }
+    }
+
+    function resetAutoplay() {
+      startAutoplay();
+    }
+
+    // Arrow navigation
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        nextSlide();
+        resetAutoplay();
+      });
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function () {
+        prevSlide();
+        resetAutoplay();
+      });
+    }
+
+    // Dot navigation
+    dots.forEach(function (dot) {
+      dot.addEventListener('click', function () {
+        var targetIndex = parseInt(this.getAttribute('data-dot'), 10);
+        if (!isNaN(targetIndex) && targetIndex !== currentIndex) {
+          goToSlide(targetIndex);
+          resetAutoplay();
+        }
+      });
+    });
+
+    // Pause on hover
+    carousel.addEventListener('mouseenter', function () {
+      isHovered = true;
+    });
+
+    carousel.addEventListener('mouseleave', function () {
+      isHovered = false;
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function (e) {
+      // Only respond if carousel is somewhat in view
+      var rect = carousel.getBoundingClientRect();
+      if (rect.top > window.innerHeight || rect.bottom < 0) return;
+
+      if (e.key === 'ArrowRight') {
+        nextSlide();
+        resetAutoplay();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+        resetAutoplay();
+      }
+    });
+
+    // Start autoplay when section is in view
+    var carouselObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            startAutoplay();
+          } else {
+            stopAutoplay();
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    carouselObserver.observe(carousel);
+
+    // Header reveal
+    var csHeaderReveal = document.querySelector('.casestudies__header-inner.cs-reveal');
+    if (csHeaderReveal) {
+      var headerObserver = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('cs-visible');
+              headerObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+      );
+      headerObserver.observe(csHeaderReveal);
+    }
+  }
+
+  initCaseStudyCarousel();
+
+
+  /* --------------------------------------------------------
      NAV INVERSION — Dark/light based on white services section
      -------------------------------------------------------- */
 
@@ -538,48 +732,20 @@
     }
   }
 
-  window.addEventListener('scroll', handleNavInversion, { passive: true });
-
 
   /* --------------------------------------------------------
-     LENIS SMOOTH MOMENTUM SCROLL & PARALLAX ENGINE
+     SERVICES PARALLAX & ZOOM IN-OUT TRANSITION EFFECT
      -------------------------------------------------------- */
 
-  let lenis = null;
-  const scrollProgressBar = document.getElementById('scrollProgressBar');
-
-  function updateScrollProgress(scroll) {
-    if (!scrollProgressBar) return;
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    if (maxScroll > 0) {
-      const progress = Math.min(100, Math.max(0, (scroll / maxScroll) * 100));
-      scrollProgressBar.style.width = progress + '%';
-    }
-  }
-
-  // Parallax elements
-  const heroContent = document.querySelector('.hero__content');
   const servicesHeaderInner = document.querySelector('.services__header-inner');
   const svcCardVisualImgs = document.querySelectorAll('.svc-card__visual img');
-  const metricsWatermark = document.querySelector('.metrics__watermark');
-  const aboutVisual = document.querySelector('.about__visual');
-  const aboutVisualImg = document.querySelector('.about__visual img');
-  const contactHeader = document.querySelector('.contact__left') || document.querySelector('.contact__header');
+  const svcCardsList = Array.from(document.querySelectorAll('.svc-card'));
 
-  function handleParallax(scrollY) {
+  function handleServicesParallax() {
     if (prefersReducedMotion) return;
-
     const windowH = window.innerHeight;
 
-    // 1. Hero Parallax: content floats downward as user scrolls away
-    if (heroContent && scrollY < windowH * 1.2) {
-      const heroOffset = scrollY * 0.22;
-      const heroOpacity = Math.max(0, 1 - (scrollY / (windowH * 0.75)));
-      heroContent.style.transform = 'translateY(' + heroOffset.toFixed(1) + 'px)';
-      heroContent.style.opacity = heroOpacity.toFixed(3);
-    }
-
-    // 2. Services Header Parallax
+    // 1. Services Header Parallax
     if (servicesHeaderInner) {
       const sHeader = document.querySelector('.services__header');
       if (sHeader) {
@@ -591,98 +757,77 @@
       }
     }
 
-    // 3. Service Cards Stacking Images Parallax
-    svcCardVisualImgs.forEach(function (img) {
-      const card = img.closest('.svc-card');
-      if (!card) return;
-      const rect = card.getBoundingClientRect();
-      if (rect.top < windowH && rect.bottom > 0) {
-        const progress = (windowH - rect.top) / (windowH + rect.height);
-        const shiftY = (progress - 0.5) * -45;
-        img.style.transform = 'translateY(' + shiftY.toFixed(1) + 'px) scale(1.05)';
+    // 2. Service Card Images — Zoom effect is strictly driven by hover on image (:hover in CSS)
+    // No scroll-driven scaling on images, keeping them stable during section scroll.
+
+    // 3. Stacking Cards Zoom Out / Scale Layering Transition
+    svcCardsList.forEach(function (card, idx) {
+      const inner = card.querySelector('.svc-card__inner');
+      if (!inner) return;
+
+      const nextCard = svcCardsList[idx + 1];
+      if (nextCard) {
+        const nextRect = nextCard.getBoundingClientRect();
+        const stickyTarget = (idx + 1) * 12;
+
+        if (nextRect.top < windowH && nextRect.top > stickyTarget) {
+          const progress = (windowH - nextRect.top) / (windowH - stickyTarget);
+          const clamped = Math.max(0, Math.min(1, progress));
+          // Zoom out card smoothly from scale(1) down to scale(0.93)
+          const scale = 1 - clamped * 0.07;
+          const translateY = clamped * -10;
+          const brightness = 1 - clamped * 0.18;
+          const radius = clamped * 28;
+
+          inner.style.transform = 'scale(' + scale.toFixed(4) + ') translateY(' + translateY.toFixed(1) + 'px)';
+          inner.style.filter = 'brightness(' + brightness.toFixed(3) + ')';
+          inner.style.borderRadius = radius.toFixed(1) + 'px';
+        } else if (nextRect.top <= stickyTarget) {
+          // Fully covered / zoomed out in the background stack
+          inner.style.transform = 'scale(0.93) translateY(-10px)';
+          inner.style.filter = 'brightness(0.82)';
+          inner.style.borderRadius = '28px';
+        } else {
+          // Active card in full focus
+          inner.style.transform = 'scale(1) translateY(0px)';
+          inner.style.filter = 'brightness(1)';
+          inner.style.borderRadius = '0px';
+        }
+      } else {
+        // Last card remains in full scale
+        inner.style.transform = 'scale(1) translateY(0px)';
+        inner.style.filter = 'brightness(1)';
+        inner.style.borderRadius = '0px';
       }
     });
-
-    // 4. Metrics Watermark Parallax
-    if (metricsWatermark) {
-      const metricsSection = document.getElementById('metrics');
-      if (metricsSection) {
-        const rect = metricsSection.getBoundingClientRect();
-        if (rect.top < windowH && rect.bottom > 0) {
-          const shiftY = ((rect.top - windowH * 0.5) * 0.18);
-          metricsWatermark.style.transform = 'translate(-50%, -50%) translateY(' + shiftY.toFixed(1) + 'px)';
-        }
-      }
-    }
-
-    // 5. About Section Visual Parallax
-    if (aboutVisual) {
-      const aboutSection = document.getElementById('about');
-      if (aboutSection) {
-        const rect = aboutSection.getBoundingClientRect();
-        if (rect.top < windowH && rect.bottom > 0) {
-          const shiftY = ((rect.top - windowH * 0.5) * -0.12);
-          aboutVisual.style.transform = 'translateY(' + shiftY.toFixed(1) + 'px)';
-          if (aboutVisualImg) {
-            aboutVisualImg.style.transform = 'scale(' + (1.02 + Math.abs(shiftY) * 0.001).toFixed(3) + ')';
-          }
-        }
-      }
-    }
-
-    // 6. Contact Section Parallax
-    if (contactHeader) {
-      const contactSection = document.getElementById('contact');
-      if (contactSection) {
-        const rect = contactSection.getBoundingClientRect();
-        if (rect.top < windowH && rect.bottom > 0) {
-          const shiftY = Math.max(-12, Math.min(12, (rect.top / windowH) * -16));
-          contactHeader.style.transform = 'translateY(' + shiftY.toFixed(1) + 'px)';
-        }
-      }
-    }
   }
 
-  // Initialize Lenis
-  if (typeof Lenis !== 'undefined' && !prefersReducedMotion) {
-    lenis = new Lenis({
-      duration: 1.25,
-      easing: function (t) {
-        return Math.min(1, 1.001 - Math.pow(2, -10 * t));
-      },
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 1.0,
-      touchMultiplier: 1.2,
-      infinite: false
-    });
-
-    lenis.on('scroll', function (e) {
-      handleNavScroll();
-      handleNavInversion();
-      updateScrollProgress(e.scroll);
-      handleParallax(e.scroll);
-      highlightActiveSection();
-    });
-
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-  } else {
-    window.addEventListener('scroll', function () {
-      handleNavScroll();
-      handleNavInversion();
-      updateScrollProgress(window.scrollY);
-      handleParallax(window.scrollY);
-      highlightActiveSection();
-    }, { passive: true });
-  }
 
   /* --------------------------------------------------------
-     SMOOTH SCROLL FOR ANCHOR LINKS (Integrated with Lenis)
+     SCROLL PROGRESS & SCROLL EVENT LISTENER
+     -------------------------------------------------------- */
+
+  const scrollProgressBar = document.getElementById('scrollProgressBar');
+
+  function updateScrollProgress(scroll) {
+    if (!scrollProgressBar) return;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if (maxScroll > 0) {
+      const progress = Math.min(100, Math.max(0, (scroll / maxScroll) * 100));
+      scrollProgressBar.style.width = progress + '%';
+    }
+  }
+
+  window.addEventListener('scroll', function () {
+    handleNavScroll();
+    handleNavInversion();
+    updateScrollProgress(window.scrollY);
+    handleServicesParallax();
+    highlightActiveSection();
+  }, { passive: true });
+
+  /* --------------------------------------------------------
+     ANCHOR NAVIGATION (Standard instant scrolling with nav offset)
      -------------------------------------------------------- */
 
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
@@ -693,321 +838,14 @@
       if (target) {
         e.preventDefault();
         const navHeight = nav ? nav.offsetHeight : 70;
-        if (lenis) {
-          lenis.scrollTo(target, { offset: -navHeight, duration: 1.4 });
-        } else {
-          const targetPosition = target.getBoundingClientRect().top + window.scrollY - navHeight;
-          window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
-          });
-        }
+        const targetPosition = target.getBoundingClientRect().top + window.scrollY - navHeight;
+        window.scrollTo(0, targetPosition);
       }
     });
   });
 
 
-  /* --------------------------------------------------------
-     CASE STUDIES CAROUSEL — Ultra-Smooth Navigation & Physics
-     -------------------------------------------------------- */
 
-  const casesCarousel = document.getElementById('casesCarousel');
-  const casesPrevBtn = document.getElementById('casesPrevBtn');
-  const casesNextBtn = document.getElementById('casesNextBtn');
-  const casesViewAllBtn = document.getElementById('casesViewAllBtn');
-
-  if (casesCarousel) {
-    let animRafId = null;
-    let wheelRafId = null;
-    let momentumRafId = null;
-
-    function getMaxScroll() {
-      const cards = casesCarousel.querySelectorAll('.case-card');
-      if (!cards.length) return 0;
-      const lastCard = cards[cards.length - 1];
-      const style = window.getComputedStyle(casesCarousel);
-      const paddingRight = parseFloat(style.paddingRight) || 0;
-      const lastCardRight = lastCard.offsetLeft + lastCard.offsetWidth;
-      return Math.max(0, Math.round(lastCardRight - casesCarousel.clientWidth + paddingRight));
-    }
-
-    function updateCarouselButtons() {
-      const maxScroll = getMaxScroll();
-      const currentScroll = casesCarousel.scrollLeft;
-
-      if (casesPrevBtn) {
-        if (currentScroll > 20) {
-          casesPrevBtn.classList.add('is-visible');
-          casesPrevBtn.disabled = false;
-        } else {
-          casesPrevBtn.classList.remove('is-visible');
-          casesPrevBtn.disabled = true;
-        }
-      }
-
-      if (casesNextBtn) {
-        if (currentScroll >= maxScroll - 15) {
-          casesNextBtn.disabled = true;
-          casesNextBtn.style.opacity = '0';
-          casesNextBtn.style.pointerEvents = 'none';
-        } else {
-          casesNextBtn.disabled = false;
-          casesNextBtn.style.opacity = '1';
-          casesNextBtn.style.pointerEvents = 'auto';
-        }
-      }
-
-      if (casesViewAllBtn) {
-        const span = casesViewAllBtn.querySelector('span');
-        const svg = casesViewAllBtn.querySelector('svg');
-        if (currentScroll >= maxScroll - 30) {
-          if (span) span.textContent = 'Back to Start';
-          if (svg) svg.style.transform = 'rotate(180deg)';
-        } else {
-          if (span) span.textContent = 'View All';
-          if (svg) svg.style.transform = '';
-        }
-      }
-    }
-
-    casesCarousel.addEventListener('scroll', updateCarouselButtons, { passive: true });
-
-    function getScrollStep() {
-      const firstCard = casesCarousel.querySelector('.case-card');
-      if (firstCard) {
-        const track = casesCarousel.querySelector('.cases__track');
-        const gap = track ? parseFloat(getComputedStyle(track).gap) || 30 : 30;
-        return firstCard.offsetWidth + gap;
-      }
-      return 520;
-    }
-
-    // High-precision smooth scroll with cubic easing
-    function smoothScrollCarouselTo(targetLeft, duration = 750, onComplete) {
-      if (animRafId) cancelAnimationFrame(animRafId);
-      if (wheelRafId) cancelAnimationFrame(wheelRafId);
-      if (momentumRafId) cancelAnimationFrame(momentumRafId);
-
-      const maxScroll = getMaxScroll();
-      const clampedTarget = Math.max(0, Math.min(maxScroll, targetLeft));
-      const start = casesCarousel.scrollLeft;
-      const distance = clampedTarget - start;
-
-      if (Math.abs(distance) < 2) {
-        if (onComplete) onComplete();
-        return;
-      }
-
-      const startTime = performance.now();
-      casesCarousel.style.scrollSnapType = 'none';
-
-      function easeInOutCubic(t) {
-        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-      }
-
-      function step(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const ease = easeInOutCubic(progress);
-        const currentPos = start + distance * ease;
-
-        casesCarousel.scrollLeft = currentPos;
-        updateCarouselButtons();
-
-        if (progress < 1) {
-          animRafId = requestAnimationFrame(step);
-        } else {
-          casesCarousel.scrollLeft = clampedTarget;
-          casesCarousel.style.scrollSnapType = '';
-          updateCarouselButtons();
-          animRafId = null;
-          if (onComplete) onComplete();
-        }
-      }
-
-      animRafId = requestAnimationFrame(step);
-    }
-
-    // Prev / Next button listeners
-    if (casesNextBtn) {
-      casesNextBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        const maxScroll = getMaxScroll();
-        const nextTarget = Math.min(maxScroll, casesCarousel.scrollLeft + getScrollStep());
-        smoothScrollCarouselTo(nextTarget, 650);
-      });
-    }
-
-    if (casesPrevBtn) {
-      casesPrevBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        const prevTarget = Math.max(0, casesCarousel.scrollLeft - getScrollStep());
-        smoothScrollCarouselTo(prevTarget, 650);
-      });
-    }
-
-    // View All button: smoothly scrolls across all projects or back to start
-    if (casesViewAllBtn) {
-      casesViewAllBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        const maxScroll = getMaxScroll();
-        if (casesCarousel.scrollLeft >= maxScroll - 30) {
-          smoothScrollCarouselTo(0, 1000);
-        } else {
-          smoothScrollCarouselTo(maxScroll, 1200);
-        }
-      });
-    }
-
-    // Smooth horizontal mouse wheel scroll with boundary passthrough
-    let wheelTarget = casesCarousel.scrollLeft;
-    let wheelCurrent = casesCarousel.scrollLeft;
-
-    function renderWheelScroll() {
-      const diff = wheelTarget - wheelCurrent;
-      if (Math.abs(diff) > 0.5) {
-        wheelCurrent += diff * 0.15;
-        casesCarousel.scrollLeft = wheelCurrent;
-        updateCarouselButtons();
-        wheelRafId = requestAnimationFrame(renderWheelScroll);
-      } else {
-        wheelCurrent = wheelTarget;
-        casesCarousel.scrollLeft = wheelCurrent;
-        updateCarouselButtons();
-        casesCarousel.style.scrollSnapType = '';
-        wheelRafId = null;
-      }
-    }
-
-    casesCarousel.addEventListener('wheel', function (e) {
-      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      if (Math.abs(delta) < 3) return;
-
-      const maxScroll = getMaxScroll();
-      const current = casesCarousel.scrollLeft;
-
-      // Allow vertical page scroll if at limits
-      const atStart = current <= 2 && delta < 0;
-      const atEnd = current >= maxScroll - 2 && delta > 0;
-
-      if (!atStart && !atEnd) {
-        e.preventDefault();
-        if (animRafId) cancelAnimationFrame(animRafId);
-        if (momentumRafId) cancelAnimationFrame(momentumRafId);
-
-        casesCarousel.style.scrollSnapType = 'none';
-        if (!wheelRafId) {
-          wheelCurrent = current;
-          wheelTarget = current;
-        }
-
-        wheelTarget = Math.max(0, Math.min(maxScroll, wheelTarget + delta * 1.25));
-
-        if (!wheelRafId) {
-          wheelRafId = requestAnimationFrame(renderWheelScroll);
-        }
-      }
-    }, { passive: false });
-
-    // Drag to scroll with natural momentum
-    let isDown = false;
-    let startX = 0;
-    let initialScroll = 0;
-    let lastX = 0;
-    let lastTime = 0;
-    let velocityX = 0;
-
-    casesCarousel.addEventListener('mousedown', function (e) {
-      if (e.button !== 0) return;
-      if (animRafId) cancelAnimationFrame(animRafId);
-      if (wheelRafId) cancelAnimationFrame(wheelRafId);
-      if (momentumRafId) cancelAnimationFrame(momentumRafId);
-
-      isDown = true;
-      startX = e.pageX - casesCarousel.offsetLeft;
-      initialScroll = casesCarousel.scrollLeft;
-      lastX = e.pageX;
-      lastTime = performance.now();
-      velocityX = 0;
-
-      casesCarousel.style.scrollSnapType = 'none';
-      casesCarousel.classList.add('is-dragging');
-    });
-
-    window.addEventListener('mouseup', function () {
-      if (!isDown) return;
-      isDown = false;
-      casesCarousel.classList.remove('is-dragging');
-
-      if (Math.abs(velocityX) > 0.25) {
-        let currentVelocity = velocityX * 16;
-        function stepMomentum() {
-          currentVelocity *= 0.92;
-          const maxScroll = getMaxScroll();
-          casesCarousel.scrollLeft = Math.max(0, Math.min(maxScroll, casesCarousel.scrollLeft - currentVelocity));
-          updateCarouselButtons();
-
-          if (Math.abs(currentVelocity) > 0.5 && casesCarousel.scrollLeft > 0 && casesCarousel.scrollLeft < maxScroll) {
-            momentumRafId = requestAnimationFrame(stepMomentum);
-          } else {
-            casesCarousel.style.scrollSnapType = '';
-            momentumRafId = null;
-          }
-        }
-        momentumRafId = requestAnimationFrame(stepMomentum);
-      } else {
-        casesCarousel.style.scrollSnapType = '';
-      }
-    });
-
-    casesCarousel.addEventListener('mousemove', function (e) {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - casesCarousel.offsetLeft;
-      const walk = (x - startX) * 1.3;
-      const maxScroll = getMaxScroll();
-      casesCarousel.scrollLeft = Math.max(0, Math.min(maxScroll, initialScroll - walk));
-
-      const now = performance.now();
-      const dt = now - lastTime;
-      if (dt > 10) {
-        velocityX = (e.pageX - lastX) / dt;
-        lastX = e.pageX;
-        lastTime = now;
-      }
-      updateCarouselButtons();
-    });
-
-    updateCarouselButtons();
-  }
-
-
-  /* --------------------------------------------------------
-     SERVICE CARDS — Reveal animation on scroll
-     -------------------------------------------------------- */
-
-  if (!prefersReducedMotion) {
-    const svcCards = document.querySelectorAll('.svc-card');
-
-    const svcObserver = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('svc-card--visible');
-            svcObserver.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        threshold: 0.25,
-        rootMargin: '0px 0px -80px 0px'
-      }
-    );
-
-    svcCards.forEach(function (card) {
-      svcObserver.observe(card);
-    });
-  }
 
 
   /* --------------------------------------------------------
@@ -1243,6 +1081,182 @@
 
 
   /* --------------------------------------------------------
+     TESTIMONIALS — Ultra-Premium Horizontal Editorial Slider
+     -------------------------------------------------------- */
+
+  function initTestimonialsSlider() {
+    const slider = document.getElementById('testimonialsSlider');
+    if (!slider) return;
+
+    const slides = Array.from(slider.querySelectorAll('.testimonials__slide'));
+    const indicators = Array.from(slider.querySelectorAll('.testimonials__indicator'));
+    const prevBtn = document.getElementById('testimonialPrev');
+    const nextBtn = document.getElementById('testimonialNext');
+    const currentCounter = document.getElementById('testimonialCurrent');
+
+    if (slides.length === 0) return;
+
+    let currentIndex = 0;
+    const totalSlides = slides.length;
+    let autoplayTimer = null;
+    const autoplayDelay = 6500;
+    let isHovered = false;
+
+    function padZero(num) {
+      return num < 10 ? '0' + num : String(num);
+    }
+
+    function goToSlide(index) {
+      if (index === currentIndex) return;
+
+      const oldSlide = slides[currentIndex];
+      const newSlide = slides[index];
+
+      // Remove active from old slide & indicator
+      oldSlide.classList.remove('is-active');
+      if (indicators[currentIndex]) {
+        indicators[currentIndex].classList.remove('is-active');
+      }
+
+      currentIndex = index;
+
+      // Add active to new slide & indicator
+      newSlide.classList.add('is-active');
+      if (indicators[currentIndex]) {
+        indicators[currentIndex].classList.add('is-active');
+      }
+
+      // Update numerical counter
+      if (currentCounter) {
+        currentCounter.textContent = padZero(currentIndex + 1);
+      }
+    }
+
+    function nextSlide() {
+      const next = (currentIndex + 1) % totalSlides;
+      goToSlide(next);
+    }
+
+    function prevSlide() {
+      const prev = (currentIndex - 1 + totalSlides) % totalSlides;
+      goToSlide(prev);
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+      autoplayTimer = setInterval(function () {
+        if (!isHovered) {
+          nextSlide();
+        }
+      }, autoplayDelay);
+    }
+
+    function stopAutoplay() {
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+    }
+
+    function resetAutoplay() {
+      startAutoplay();
+    }
+
+    // Prev / Next click handlers
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        nextSlide();
+        resetAutoplay();
+      });
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function () {
+        prevSlide();
+        resetAutoplay();
+      });
+    }
+
+    // Indicator click handlers
+    indicators.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const targetIndex = parseInt(this.getAttribute('data-slide'), 10);
+        if (!isNaN(targetIndex) && targetIndex !== currentIndex) {
+          goToSlide(targetIndex);
+          resetAutoplay();
+        }
+      });
+    });
+
+    // Hover pause
+    slider.addEventListener('mouseenter', function () {
+      isHovered = true;
+    });
+
+    slider.addEventListener('mouseleave', function () {
+      isHovered = false;
+    });
+
+    // Drag / Touch Swipe gesture handling
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const minSwipeDistance = 45;
+
+    slider.addEventListener('touchstart', function (e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    slider.addEventListener('touchend', function (e) {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchEndX - touchStartX;
+      if (Math.abs(diff) >= minSwipeDistance) {
+        if (diff < 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+        resetAutoplay();
+      }
+    }, { passive: true });
+
+    // Keyboard navigation when section in view
+    document.addEventListener('keydown', function (e) {
+      const rect = slider.getBoundingClientRect();
+      if (rect.top > window.innerHeight || rect.bottom < 0) return;
+
+      if (e.key === 'ArrowRight') {
+        nextSlide();
+        resetAutoplay();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+        resetAutoplay();
+      }
+    });
+
+    // Start autoplay only when section intersects viewport
+    const testimonialsSection = document.getElementById('testimonials');
+    if (testimonialsSection) {
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            startAutoplay();
+          } else {
+            stopAutoplay();
+          }
+        });
+      }, { threshold: 0.1 });
+
+      observer.observe(testimonialsSection);
+    }
+  }
+
+  initTestimonialsSlider();
+
+
+
+
+
+  /* --------------------------------------------------------
      PAGE LOAD — Ensure everything initializes cleanly
      -------------------------------------------------------- */
 
@@ -1250,6 +1264,7 @@
     document.body.classList.add('is-loaded');
     handleNavScroll();
     handleNavInversion();
+    handleServicesParallax();
   });
 
 })();
