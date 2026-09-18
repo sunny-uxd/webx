@@ -2478,3 +2478,627 @@ button {
     transition: none;
   }
 }
+
+
+/* ============================================================
+   FULL-SCREEN CASE STUDY DETAIL MODAL
+   ============================================================ */
+
+body.modal-open {
+  overflow: hidden !important;
+}
+
+.cs-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.4s;
+  outline: none;
+}
+
+.cs-modal.is-open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cs-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 5, 5, 0.95);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  z-index: 1;
+}
+
+.cs-modal__scroller {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 2;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+/* Modal Sticky Top Header Bar */
+.cs-modal__header {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  background: rgba(8, 8, 8, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  box-sizing: border-box;
+}
+
+.cs-modal__header-inner {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 1rem var(--gutter);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cs-modal__header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.cs-modal__badge {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #888888;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cs-modal__header-title {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cs-modal__header-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.cs-modal__nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.42rem 0.88rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  color: #cccccc;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 450;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cs-modal__nav-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.cs-modal__nav-counter {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 450;
+  color: #666666;
+  font-variant-numeric: tabular-nums;
+  padding: 0 0.3rem;
+}
+
+.cs-modal__close-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 1.05rem;
+  border-radius: 999px;
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  color: #000000;
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  font-weight: 550;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cs-modal__close-btn:hover {
+  background: #f0f0f0;
+  transform: scale(1.04);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+}
+
+.cs-modal__esc-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.1);
+  color: #222222;
+}
+
+/* Modal Content Container */
+.cs-modal__container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 5vh, 4rem) var(--gutter) clamp(6rem, 10vh, 9rem);
+  box-sizing: border-box;
+}
+
+/* Modal Detail Header Hero */
+.cs-detail__hero {
+  margin-bottom: clamp(3.5rem, 6vh, 5.5rem);
+}
+
+.cs-detail__tag {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #888888;
+  margin-bottom: 1.25rem;
+}
+
+.cs-detail__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 5.2vw, 4.6rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  margin-bottom: clamp(1.2rem, 2vh, 1.8rem);
+  max-width: 980px;
+}
+
+.cs-detail__lead {
+  font-family: var(--font-sans);
+  font-size: clamp(1.15rem, 1.45vw, 1.35rem);
+  font-weight: 350;
+  color: #a0a0a0;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  max-width: 880px;
+  margin-bottom: clamp(2.5rem, 4vh, 3.8rem);
+}
+
+/* Meta Data Grid (4 Columns) */
+.cs-detail__meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 2vw, 1.5rem);
+  padding: clamp(1.8rem, 3vw, 2.4rem);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  margin-bottom: clamp(3rem, 5vh, 4.5rem);
+}
+
+.cs-detail__meta-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cs-detail__meta-card-label {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #666666;
+}
+
+.cs-detail__meta-card-value {
+  font-family: var(--font-sans);
+  font-size: clamp(0.95rem, 1.1vw, 1.08rem);
+  font-weight: 450;
+  color: #ffffff;
+  line-height: 1.45;
+}
+
+/* Key Impact Metrics Banner */
+.cs-detail__metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 2vw, 1.5rem);
+  margin-bottom: clamp(3.5rem, 6vh, 5.5rem);
+}
+
+.cs-detail__metric-box {
+  padding: clamp(1.6rem, 2.5vw, 2.2rem);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.cs-detail__metric-box:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-3px);
+}
+
+.cs-detail__metric-num {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 3.8vw, 3.6rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.cs-detail__metric-label {
+  font-family: var(--font-sans);
+  font-size: clamp(0.85rem, 1vw, 0.95rem);
+  font-weight: 350;
+  color: #888888;
+  line-height: 1.5;
+}
+
+/* Featured Hero Showcase Visual */
+.cs-detail__hero-visual {
+  width: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
+  margin-bottom: clamp(4.5rem, 8vh, 7rem);
+  background: #0d0d0d;
+}
+
+.cs-detail__hero-visual img {
+  width: 100%;
+  height: clamp(480px, 68vh, 760px);
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+/* Narrative Content Sections */
+.cs-detail__section {
+  margin-bottom: clamp(4.5rem, 8vh, 7rem);
+}
+
+.cs-detail__section-tag {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #777777;
+  margin-bottom: 1rem;
+}
+
+.cs-detail__section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  color: #ffffff;
+  margin-bottom: clamp(1.4rem, 2.4vh, 2rem);
+  max-width: 860px;
+}
+
+.cs-detail__paragraph {
+  font-family: var(--font-sans);
+  font-size: clamp(1.05rem, 1.25vw, 1.2rem);
+  font-weight: 350;
+  color: #a8a8a8;
+  line-height: 1.8;
+  letter-spacing: -0.01em;
+  max-width: 900px;
+  margin-bottom: 1.5rem;
+}
+
+.cs-detail__paragraph strong {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* Highlight Blockquote */
+.cs-detail__quote {
+  margin: clamp(2rem, 3.5vh, 3rem) 0;
+  padding: 1rem 0 1rem 1.8rem;
+  border-left: 2px solid #ffffff;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.25rem, 1.8vw, 1.65rem);
+  color: #ffffff;
+  line-height: 1.5;
+  max-width: 860px;
+}
+
+/* Structured 3-Card Grid (Pain points / Discovery / Features) */
+.cs-detail__cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.2rem, 2vw, 1.8rem);
+  margin-top: clamp(2rem, 3.5vh, 3rem);
+}
+
+.cs-detail__card {
+  padding: clamp(1.8rem, 2.5vw, 2.4rem);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.cs-detail__card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+}
+
+.cs-detail__card-num {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: #666666;
+}
+
+.cs-detail__card-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1.5vw, 1.45rem);
+  font-weight: 550;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.cs-detail__card-text {
+  font-family: var(--font-sans);
+  font-size: clamp(0.92rem, 1.05vw, 1.02rem);
+  font-weight: 350;
+  color: #888888;
+  line-height: 1.65;
+}
+
+/* Feature Showcase Split Layout */
+.cs-detail__split-feature {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  align-items: center;
+  margin-top: clamp(2.5rem, 4vh, 4rem);
+  padding: clamp(2rem, 3.5vw, 3rem);
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+}
+
+.cs-detail__split-feature--reverse {
+  direction: rtl;
+}
+
+.cs-detail__split-feature--reverse > * {
+  direction: ltr;
+}
+
+.cs-detail__split-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cs-detail__split-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2vw, 1.85rem);
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.25;
+}
+
+.cs-detail__split-desc {
+  font-family: var(--font-sans);
+  font-size: clamp(0.98rem, 1.15vw, 1.1rem);
+  font-weight: 350;
+  color: #999999;
+  line-height: 1.7;
+}
+
+.cs-detail__split-visual {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.cs-detail__split-visual img {
+  width: 100%;
+  height: clamp(340px, 45vh, 460px);
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+/* Testimonial Box inside Case Study */
+.cs-detail__testimonial-box {
+  padding: clamp(2.5rem, 4vw, 3.8rem);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  margin: clamp(3.5rem, 6vh, 5.5rem) 0;
+}
+
+.cs-detail__testimonial-quote {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
+  font-weight: 400;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 2rem;
+}
+
+.cs-detail__testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cs-detail__testimonial-name {
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.cs-detail__testimonial-title {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  color: #777777;
+}
+
+/* Next Project Teaser Footer */
+.cs-detail__next-project {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: clamp(2.5rem, 4vw, 3.8rem);
+  background: #ffffff;
+  color: #000000;
+  border-radius: 20px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: clamp(4rem, 7vh, 6rem);
+}
+
+.cs-detail__next-project:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(255, 255, 255, 0.18);
+  background: #f4f4f4;
+}
+
+.cs-detail__next-label {
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #666666;
+  margin-bottom: 0.5rem;
+}
+
+.cs-detail__next-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #000000;
+}
+
+.cs-detail__next-arrow {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #000000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cs-detail__next-project:hover .cs-detail__next-arrow {
+  transform: translateX(6px);
+}
+
+/* Responsive Modal Overrides */
+@media (max-width: 1024px) {
+  .cs-detail__meta-grid,
+  .cs-detail__metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cs-detail__cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cs-detail__split-feature {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .cs-modal__header-inner {
+    padding: 0.85rem var(--gutter);
+  }
+
+  .cs-modal__header-title {
+    display: none;
+  }
+
+  .cs-modal__esc-badge {
+    display: none;
+  }
+
+  .cs-detail__meta-grid,
+  .cs-detail__metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cs-detail__hero-visual img {
+    height: clamp(280px, 42vh, 420px);
+  }
+
+  .cs-detail__split-visual img {
+    height: clamp(240px, 35vh, 320px);
+  }
+
+  .cs-detail__next-project {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+}
+

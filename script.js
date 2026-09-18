@@ -1255,6 +1255,487 @@
 
 
 
+  initTestimonialsSlider();
+
+
+
+  /* --------------------------------------------------------
+     CASE STUDY FULL-SCREEN MODAL ENGINE & DATA
+     -------------------------------------------------------- */
+
+  function initCaseStudyModal() {
+    const modal = document.getElementById('csModal');
+    const modalContent = document.getElementById('csModalContent');
+    const modalHeaderTitle = document.getElementById('csModalHeaderTitle');
+    const modalBadge = document.getElementById('csModalBadge');
+    const modalCounter = document.getElementById('csModalCounter');
+    const closeBtn = document.getElementById('csModalCloseBtn');
+    const prevBtn = document.getElementById('csModalPrevBtn');
+    const nextBtn = document.getElementById('csModalNextBtn');
+    const backdrop = document.getElementById('csModalBackdrop');
+    const scroller = document.getElementById('csModalScroller');
+
+    if (!modal || !modalContent) return;
+
+    let currentProjectIndex = 0;
+
+    const caseStudiesData = [
+      {
+        id: "skysite-intelligence",
+        title: "Skysite Intelligence",
+        tag: "AI & Enterprise SaaS",
+        subtitle: "Designing an intelligent conversational AI partner that empowers construction professionals to query complex archives and architectural drawing sets with zero latency.",
+        image: "assets/skysite-intelligence.jpg",
+        meta: {
+          role: "Lead UI/UX & AI Product Designer",
+          client: "Skysite Technologies",
+          timeline: "14 Weeks (2025)",
+          focus: "Conversational AI · Natural Language Querying · Enterprise Design System"
+        },
+        metrics: [
+          { num: "68%", label: "Faster Query Retrieval Time" },
+          { num: "4.9/5", label: "Field Engineer Usability Rating" },
+          { num: "94.2%", label: "First-Attempt Prompt Accuracy" },
+          { num: "+42%", label: "Weekly Active User Engagement" }
+        ],
+        challenge: {
+          overview: "Architects and field superintendents manage thousands of blueprint revisions, submittals, and compliance specifications across multi-million dollar projects. Finding specific answers to urgent site questions historically required hours of manual digging through siloed document trees.",
+          painPoints: [
+            { num: "01", title: "Information Fragmentation", text: "Critical architectural changes buried across 50+ revision sets, causing costly on-site misalignments." },
+            { num: "02", title: "Complex Query Latency", text: "Engineers spent an average of 45 minutes daily hunting through dense drawing indexes." },
+            { num: "03", title: "Trust & Explainability Gap", text: "Users were hesitant to trust generative AI without verifiable visual citations on the blueprints." }
+          ]
+        },
+        solution: {
+          title: "Context-Aware Conversational Intelligence",
+          desc: "We designed a multi-modal assistant that ingests large-scale architectural drawing sets, interprets CAD/PDF metadata, and provides natural conversational responses with pinpoint visual drawing callouts.",
+          quote: "“Sunny designed a transparent AI interface that turned skeptical project managers into enthusiastic daily power users within weeks.”",
+          features: [
+            {
+              title: "Interactive Visual Grounding & Citation Overlay",
+              desc: "Every AI response highlights the exact sheet, room coordinate, and revision date on the interactive drawing viewer, giving engineers 100% confidence.",
+              image: "assets/skysite-intelligence.jpg"
+            },
+            {
+              title: "Domain-Aware Prompt Architecture",
+              desc: "Engineered smart suggestion chips, voice-to-text field input, and specialized construction filters that guide users toward precise answers effortlessly.",
+              image: "assets/service-ai-experience.jpg"
+            }
+          ]
+        },
+        impact: {
+          quote: "“The intelligent conversational workflow transformed how our project teams operate. Our field teams saved over 5 hours per week per engineer, directly slashing revision errors.”",
+          author: "Marcus Vance",
+          title: "VP of Product Engineering · Enterprise Construction Solutions"
+        }
+      },
+      {
+        id: "skysite-archive",
+        title: "Skysite Archive",
+        tag: "Document Management & SaaS",
+        subtitle: "Redesigning the enterprise archive experience for construction professionals, streamlining multi-gigabyte document management and fast drawing search.",
+        image: "assets/skysite-archive.jpg",
+        meta: {
+          role: "Principal Product Designer",
+          client: "Skysite Enterprise",
+          timeline: "12 Weeks (2025)",
+          focus: "Information Architecture · Multi-Role Workflows · Performance UI"
+        },
+        metrics: [
+          { num: "3.4x", label: "Faster Batch File Uploads" },
+          { num: "89%", label: "Reduction in Support Tickets" },
+          { num: "100%", label: "WCAG AAA Accessibility Compliance" },
+          { num: "+55%", label: "Document Sharing Efficiency" }
+        ],
+        challenge: {
+          overview: "Legacy document repositories suffered from bloated table views, sluggish file rendering, and confusing permission settings that frustrated multi-disciplinary teams working on tight building deadlines.",
+          painPoints: [
+            { num: "01", title: "Cluttered Information Architecture", text: "Deep nested folder hierarchies made discovering specific structural drawings difficult." },
+            { num: "02", title: "Slow Bulk Actions", text: "Multi-file tagging, sharing, and batch permissions required repetitive multi-step modals." },
+            { num: "03", title: "Inconsistent Cross-Platform UI", text: "Desktop web and tablet interfaces lacked design system consistency and coherent navigation." }
+          ]
+        },
+        solution: {
+          title: "Streamlined Digital Asset Management",
+          desc: "Architected a high-performance grid & list view system with smart faceted filtering, instant drawing preview lightboxes, and frictionless batch operations.",
+          quote: "“We eliminated 4 redundant steps from every document retrieval workflow, cutting system latency down to sub-second responses.”",
+          features: [
+            {
+              title: "Faceted Live Search & Instant Drawing Viewer",
+              desc: "Instant search indexing with contextual thumbnails that let users inspect high-resolution vector blueprints without downloading.",
+              image: "assets/skysite-archive.jpg"
+            },
+            {
+              title: "Unified Permissions & Role Management",
+              desc: "A simplified matrix for managing contractors, architects, and client viewing permissions with zero ambiguity.",
+              image: "assets/service-enterprise-saas.jpg"
+            }
+          ]
+        },
+        impact: {
+          quote: "“Sunny's redesign of Skysite Archive set a new benchmark for our entire software ecosystem. Our clients praise the speed, clarity, and ease of navigation daily.”",
+          author: "Sarah Jenkins",
+          title: "Director of Enterprise UX · Skysite Global"
+        }
+      },
+      {
+        id: "hospital-adda",
+        title: "Hospital Adda",
+        tag: "Healthcare Operations & Booking",
+        subtitle: "Creating a seamless healthcare operations and specialist doctor booking platform that simplifies scheduling and patient care coordination.",
+        image: "assets/hospital-adda.jpg",
+        meta: {
+          role: "Lead UI/UX Designer",
+          client: "Hospital Adda Healthcare",
+          timeline: "12 Weeks (2025)",
+          focus: "Healthcare UX · Appointment Systems · Mobile First Design"
+        },
+        metrics: [
+          { num: "+74%", label: "Increase in Online Bookings" },
+          { num: "2.1 min", label: "Average Appointment Booking Time" },
+          { num: "42%", label: "Reduction in No-Show Rates" },
+          { num: "4.9/5", label: "Patient Satisfaction Score" }
+        ],
+        challenge: {
+          overview: "Patients often experienced overwhelming medical jargon, fragmented doctor availability calendars, and unclear fee structures when trying to book critical specialist consultations.",
+          painPoints: [
+            { num: "01", title: "Complex Specialist Discovery", text: "Patients struggled to match their symptoms with appropriate hospital departments." },
+            { num: "02", title: "High Booking Drop-Off", text: "Cumbersome multi-step forms led to high abandonment rates before appointment confirmation." },
+            { num: "03", title: "Communication Gaps", text: "Lack of automated pre-appointment instructions led to high hospital no-show rates." }
+          ]
+        },
+        solution: {
+          title: "Empathetic, Human-Centered Healthcare",
+          desc: "Designed an intuitive 3-step booking journey with natural symptom guided search, real-time doctor availability calendars, and transparent pricing previews.",
+          quote: "“By humanizing healthcare terminology and removing friction, we empowered patients to book consultations in under 2 minutes.”",
+          features: [
+            {
+              title: "Symptom-Guided Specialist Matcher",
+              desc: "An intuitive conversational questionnaire that guides users to the right department and doctor specialist effortlessly.",
+              image: "assets/hospital-adda.jpg"
+            },
+            {
+              title: "Live Queue & Tele-Consultation Hub",
+              desc: "Patients can track live waiting room queues and join virtual follow-ups seamlessly across any mobile device.",
+              image: "assets/service-product-design.jpg"
+            }
+          ]
+        },
+        impact: {
+          quote: "“The new patient experience increased our digital appointment volume by 74% and transformed how our hospital connects with patients.”",
+          author: "Dr. Arvind Mehta",
+          title: "Medical Director · Hospital Adda Network"
+        }
+      },
+      {
+        id: "twila",
+        title: "Twila",
+        tag: "E-Commerce & Digital Brand",
+        subtitle: "Designing a high-conversion modern fashion e-commerce experience focused on aesthetic storytelling, intuitive discovery, and frictionless checkout.",
+        image: "assets/twila.png",
+        meta: {
+          role: "Lead Digital Product Designer",
+          client: "Twila Fashion House",
+          timeline: "12 Weeks (2025)",
+          focus: "E-Commerce Strategy · Micro-Interactions · Conversion Rate Optimization"
+        },
+        metrics: [
+          { num: "3.8x", label: "Mobile Conversion Rate Increase" },
+          { num: "38%", label: "Higher Average Order Value" },
+          { num: "1.4s", label: "Optimized Page Load Speed" },
+          { num: "62%", label: "Repeat Purchase Rate" }
+        ],
+        challenge: {
+          overview: "Modern digital fashion consumers expect immersive editorial visuals alongside instant, friction-free purchasing flows. Twila needed a fresh design identity to compete with global luxury retail brands.",
+          painPoints: [
+            { num: "01", title: "Mobile Friction", text: "Legacy checkout flows had high cart abandonment rates on mobile devices." },
+            { num: "02", title: "Static Product Displays", text: "Lack of dynamic sizing guides and video lookbooks reduced buying confidence." },
+            { num: "03", title: "Impersonal Discovery", text: "Users couldn't easily browse curated capsule wardrobes or style pairings." }
+          ]
+        },
+        solution: {
+          title: "Editorial Storytelling Meets Lightning Checkout",
+          desc: "Created a minimalist, typography-led luxury shopping experience featuring immersive lookbooks, dynamic fit predictors, and a streamlined 1-tap checkout.",
+          quote: "“We balanced high-fashion editorial aesthetics with rigorous conversion rate optimization, driving a 3.8x lift in mobile checkout success.”",
+          features: [
+            {
+              title: "Interactive Lookbook & Complete the Look",
+              desc: "Shoppers can explore complete curated outfits and add multiple complementary garments to bag with a single tap.",
+              image: "assets/twila.png"
+            },
+            {
+              title: "One-Page Frictionless Checkout Flow",
+              desc: "Eliminated unnecessary form steps with native Apple Pay, Google Pay, and instant guest checkout integration.",
+              image: "assets/service-strategy-research.jpg"
+            }
+          ]
+        },
+        impact: {
+          quote: "“Twila's new digital flagship store elevated our brand prestige and generated immediate, record-breaking revenue growth across mobile channels.”",
+          author: "Elena Rostova",
+          title: "Head of Digital Commerce · Twila"
+        }
+      },
+      {
+        id: "alaya-wellbeing",
+        title: "Alaya Wellbeing",
+        tag: "Wellness Platform & Booking",
+        subtitle: "Designing an immersive wellness and retreat booking experience that connects individuals with personalized mindfulness therapies and instructors.",
+        image: "assets/alaya-wellbeing.jpg",
+        meta: {
+          role: "Lead Product & Brand Designer",
+          client: "Alaya Global Wellbeing",
+          timeline: "12 Weeks (2025)",
+          focus: "Service Design · Mindful UX · Subscription & Booking Flows"
+        },
+        metrics: [
+          { num: "+82%", label: "Member Onboarding Completion" },
+          { num: "4.9/5", label: "App Store User Rating" },
+          { num: "2.4x", label: "Growth in Multi-Session Packages" },
+          { num: "96%", label: "Monthly Member Retention" }
+        ],
+        challenge: {
+          overview: "Wellness seekers often feel intimidated by complex holistic schedules, uncertain session expectations, and disjointed instructor communication.",
+          painPoints: [
+            { num: "01", title: "Intimidating Onboarding", text: "New users felt overwhelmed by generic class lists without personalized guidance." },
+            { num: "02", title: "Clunky Scheduling Matrix", text: "Syncing time zones for live retreat sessions caused friction for global members." },
+            { num: "03", title: "Disconnected Progress Tracking", text: "Users lacked a calming space to reflect on personal mindfulness milestones." }
+          ]
+        },
+        solution: {
+          title: "Calm, Mindful Digital Sanctuary",
+          desc: "Designed a serene, breathing interface with tailored wellness questionnaires, seamless timezone-aware retreat booking, and reflective personal progress journals.",
+          quote: "“The design breathes calm from the very first tap, turning a functional booking tool into an essential part of the user's daily self-care ritual.”",
+          features: [
+            {
+              title: "Tailored Wellness Assessment & Matching",
+              desc: "A calming questionnaire that curates personalized meditation, yoga, and breathwork journeys suited to user goals.",
+              image: "assets/alaya-wellbeing.jpg"
+            },
+            {
+              title: "Seamless Retreat Booking & Schedule Sync",
+              desc: "1-tap calendar integration, automated wellness reminders, and live audio prep tracks for upcoming sessions.",
+              image: "assets/service-product-design.jpg"
+            }
+          ]
+        },
+        impact: {
+          quote: "“Sunny delivered a masterpiece in mindful product design. Our community feedback has been extraordinarily positive, with members raving about how intuitive and peaceful the app feels.”",
+          author: "Maya Lin",
+          title: "Founder & CEO · Alaya Wellbeing"
+        }
+      }
+    ];
+
+    function renderCaseStudy(index) {
+      const data = caseStudiesData[index];
+      if (!data) return;
+
+      currentProjectIndex = index;
+      const nextIndex = (index + 1) % caseStudiesData.length;
+      const nextData = caseStudiesData[nextIndex];
+
+      // Update header
+      modalHeaderTitle.textContent = data.title;
+      modalBadge.textContent = data.tag;
+      modalCounter.textContent = (index + 1) + ' / ' + caseStudiesData.length;
+
+      // Build HTML template
+      let html = '';
+
+      // Hero Header
+      html += '<div class="cs-detail__hero">';
+      html += '  <span class="cs-detail__tag">' + data.tag + '</span>';
+      html += '  <h1 class="cs-detail__title">' + data.title + '</h1>';
+      html += '  <p class="cs-detail__lead">' + data.subtitle + '</p>';
+
+      // Metadata Grid
+      html += '  <div class="cs-detail__meta-grid">';
+      html += '    <div class="cs-detail__meta-card">';
+      html += '      <span class="cs-detail__meta-card-label">Role</span>';
+      html += '      <span class="cs-detail__meta-card-value">' + data.meta.role + '</span>';
+      html += '    </div>';
+      html += '    <div class="cs-detail__meta-card">';
+      html += '      <span class="cs-detail__meta-card-label">Client</span>';
+      html += '      <span class="cs-detail__meta-card-value">' + data.meta.client + '</span>';
+      html += '    </div>';
+      html += '    <div class="cs-detail__meta-card">';
+      html += '      <span class="cs-detail__meta-card-label">Timeline</span>';
+      html += '      <span class="cs-detail__meta-card-value">' + data.meta.timeline + '</span>';
+      html += '    </div>';
+      html += '    <div class="cs-detail__meta-card">';
+      html += '      <span class="cs-detail__meta-card-label">Focus</span>';
+      html += '      <span class="cs-detail__meta-card-value">' + data.meta.focus + '</span>';
+      html += '    </div>';
+      html += '  </div>';
+
+      // Key Metrics Banner
+      html += '  <div class="cs-detail__metrics-grid">';
+      data.metrics.forEach(function (m) {
+        html += '  <div class="cs-detail__metric-box">';
+        html += '    <span class="cs-detail__metric-num">' + m.num + '</span>';
+        html += '    <span class="cs-detail__metric-label">' + m.label + '</span>';
+        html += '  </div>';
+      });
+      html += '  </div>';
+
+      // Featured Hero Visual
+      html += '  <div class="cs-detail__hero-visual">';
+      html += '    <img src="' + data.image + '" alt="' + data.title + ' Showcase" loading="lazy" />';
+      html += '  </div>';
+      html += '</div>';
+
+      // Section 1: The Challenge
+      html += '<section class="cs-detail__section">';
+      html += '  <span class="cs-detail__section-tag">01 / The Challenge</span>';
+      html += '  <h2 class="cs-detail__section-title">Understanding the Friction & Core Problem</h2>';
+      html += '  <p class="cs-detail__paragraph">' + data.challenge.overview + '</p>';
+      html += '  <div class="cs-detail__cards-grid">';
+      data.challenge.painPoints.forEach(function (p) {
+        html += '  <div class="cs-detail__card">';
+        html += '    <span class="cs-detail__card-num">' + p.num + '</span>';
+        html += '    <h3 class="cs-detail__card-title">' + p.title + '</h3>';
+        html += '    <p class="cs-detail__card-text">' + p.text + '</p>';
+        html += '  </div>';
+      });
+      html += '  </div>';
+      html += '</section>';
+
+      // Section 2: The Solution
+      html += '<section class="cs-detail__section">';
+      html += '  <span class="cs-detail__section-tag">02 / Design Solution</span>';
+      html += '  <h2 class="cs-detail__section-title">' + data.solution.title + '</h2>';
+      html += '  <p class="cs-detail__paragraph">' + data.solution.desc + '</p>';
+      html += '  <blockquote class="cs-detail__quote">' + data.solution.quote + '</blockquote>';
+
+      // Feature Split Showcases
+      data.solution.features.forEach(function (f, fIdx) {
+        const reverseClass = fIdx % 2 === 1 ? ' cs-detail__split-feature--reverse' : '';
+        html += '  <div class="cs-detail__split-feature' + reverseClass + '">';
+        html += '    <div class="cs-detail__split-text">';
+        html += '      <h3 class="cs-detail__split-title">' + f.title + '</h3>';
+        html += '      <p class="cs-detail__split-desc">' + f.desc + '</p>';
+        html += '    </div>';
+        html += '    <div class="cs-detail__split-visual">';
+        html += '      <img src="' + f.image + '" alt="' + f.title + '" loading="lazy" />';
+        html += '    </div>';
+        html += '  </div>';
+      });
+      html += '</section>';
+
+      // Section 3: Impact & Feedback
+      html += '<section class="cs-detail__section">';
+      html += '  <span class="cs-detail__section-tag">03 / Outcomes & Testimonial</span>';
+      html += '  <h2 class="cs-detail__section-title">Measurable Business Value & Impact</h2>';
+      html += '  <div class="cs-detail__testimonial-box">';
+      html += '    <p class="cs-detail__testimonial-quote">' + data.impact.quote + '</p>';
+      html += '    <div class="cs-detail__testimonial-author">';
+      html += '      <div>';
+      html += '        <div class="cs-detail__testimonial-name">' + data.impact.author + '</div>';
+      html += '        <div class="cs-detail__testimonial-title">' + data.impact.title + '</div>';
+      html += '      </div>';
+      html += '    </div>';
+      html += '  </div>';
+      html += '</section>';
+
+      // Next Project Teaser Footer
+      html += '<div class="cs-detail__next-project" id="csNextProjectCard" data-next-idx="' + nextIndex + '">';
+      html += '  <div>';
+      html += '    <div class="cs-detail__next-label">Next Project</div>';
+      html += '    <div class="cs-detail__next-title">' + nextData.title + ' →</div>';
+      html += '  </div>';
+      html += '  <div class="cs-detail__next-arrow">';
+      html += '    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+      html += '  </div>';
+      html += '</div>';
+
+      modalContent.innerHTML = html;
+
+      // Scroll modal to top
+      if (scroller) scroller.scrollTop = 0;
+
+      // Attach next project click handler
+      const nextCard = document.getElementById('csNextProjectCard');
+      if (nextCard) {
+        nextCard.addEventListener('click', function () {
+          renderCaseStudy(nextIndex);
+        });
+      }
+    }
+
+    function openModal(index) {
+      renderCaseStudy(index);
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      modal.focus();
+    }
+
+    function closeModal() {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    // Attach click listeners to case studies slides and CTA buttons
+    const slides = document.querySelectorAll('.cs-slide');
+    slides.forEach(function (slide, idx) {
+      const ctaBtn = slide.querySelector('.cs-slide__cta');
+      const imgWrap = slide.querySelector('.cs-slide__image-wrap');
+
+      if (ctaBtn) {
+        ctaBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          openModal(idx);
+        });
+      }
+
+      if (imgWrap) {
+        imgWrap.addEventListener('click', function () {
+          openModal(idx);
+        });
+      }
+    });
+
+    // Close button & backdrop
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', closeModal);
+
+    // Prev / Next buttons in modal header
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function () {
+        const prevIdx = (currentProjectIndex - 1 + caseStudiesData.length) % caseStudiesData.length;
+        renderCaseStudy(prevIdx);
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        const nextIdx = (currentProjectIndex + 1) % caseStudiesData.length;
+        renderCaseStudy(nextIdx);
+      });
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function (e) {
+      if (!modal.classList.contains('is-open')) return;
+
+      if (e.key === 'Escape') {
+        closeModal();
+      } else if (e.key === 'ArrowRight') {
+        const nextIdx = (currentProjectIndex + 1) % caseStudiesData.length;
+        renderCaseStudy(nextIdx);
+      } else if (e.key === 'ArrowLeft') {
+        const prevIdx = (currentProjectIndex - 1 + caseStudiesData.length) % caseStudiesData.length;
+        renderCaseStudy(prevIdx);
+      }
+    });
+  }
+
+  initCaseStudyModal();
+
+
+
   /* --------------------------------------------------------
      PAGE LOAD — Ensure everything initializes cleanly
      -------------------------------------------------------- */
