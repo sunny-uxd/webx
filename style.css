@@ -674,11 +674,10 @@ button {
 
 .svc-card__visual img {
   width: 100%;
-  height: clamp(480px, 62vh, 625px);
-  max-height: 645px;
+  height: clamp(450px, 70vh, 760px);
   display: block;
   object-fit: cover;
-  object-position: center 25%;
+  object-position: center top;
   border-radius: 0;
   transform: scale(1);
   transform-origin: center center;
@@ -1300,9 +1299,7 @@ button {
 
 .about__visual img {
   width: 100%;
-  height: auto;
-  max-height: clamp(430px, 70vh, 642px);
-  aspect-ratio: 1.2 / 0.9;
+  height: clamp(450px, 70vh, 760px);
   border-radius: 0;
   object-fit: cover;
   object-position: center 20%;
@@ -2304,8 +2301,7 @@ button {
   }
 
   .svc-card__visual img {
-    height: clamp(265px, 39vh, 370px);
-    max-height: 390px;
+    height: clamp(280px, 42vh, 420px);
     width: 100%;
     border-radius: 0;
   }
