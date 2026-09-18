@@ -1057,7 +1057,7 @@
         .then(function (data) {
           submitBtn.innerHTML = '<span>Inquiry Sent ✓</span>';
           statusBox.className = 'contact-form__status is-visible is-success';
-          statusBox.textContent = 'Thank you, ' + nameVal + '! Your inquiry has been dispatched to sunny.rm66@gmail.com. Sunny will reach out to you shortly.';
+          statusBox.textContent = "Your message has been received, and I'll respond shortly";
           form.reset();
 
           setTimeout(function () {
