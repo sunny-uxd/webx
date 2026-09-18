@@ -738,38 +738,37 @@
             </div>
           </article>
 
-        </div>
+        <!-- Carousel Controls Bar (Prev, Dots, Next) -->
+        <div class="cs-carousel__controls">
+          <button class="cs-carousel__arrow cs-carousel__arrow--prev" id="csCarouselPrev" aria-label="Previous project">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </button>
 
-        <!-- Navigation Arrows -->
-        <button class="cs-carousel__arrow cs-carousel__arrow--prev" id="csCarouselPrev" aria-label="Previous project">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-            aria-hidden="true">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <button class="cs-carousel__arrow cs-carousel__arrow--next" id="csCarouselNext" aria-label="Next project">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-            aria-hidden="true">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </button>
+          <!-- Dot Indicators with Progress -->
+          <div class="cs-carousel__dots" id="csCarouselDots">
+            <button class="cs-carousel__dot cs-carousel__dot--active" data-dot="0" aria-label="Go to project 1">
+              <span class="cs-carousel__dot-progress"></span>
+            </button>
+            <button class="cs-carousel__dot" data-dot="1" aria-label="Go to project 2">
+              <span class="cs-carousel__dot-progress"></span>
+            </button>
+            <button class="cs-carousel__dot" data-dot="2" aria-label="Go to project 3">
+              <span class="cs-carousel__dot-progress"></span>
+            </button>
+            <button class="cs-carousel__dot" data-dot="3" aria-label="Go to project 4">
+              <span class="cs-carousel__dot-progress"></span>
+            </button>
+            <button class="cs-carousel__dot" data-dot="4" aria-label="Go to project 5">
+              <span class="cs-carousel__dot-progress"></span>
+            </button>
+          </div>
 
-        <!-- Dot Indicators with Progress -->
-        <div class="cs-carousel__dots" id="csCarouselDots">
-          <button class="cs-carousel__dot cs-carousel__dot--active" data-dot="0" aria-label="Go to project 1">
-            <span class="cs-carousel__dot-progress"></span>
-          </button>
-          <button class="cs-carousel__dot" data-dot="1" aria-label="Go to project 2">
-            <span class="cs-carousel__dot-progress"></span>
-          </button>
-          <button class="cs-carousel__dot" data-dot="2" aria-label="Go to project 3">
-            <span class="cs-carousel__dot-progress"></span>
-          </button>
-          <button class="cs-carousel__dot" data-dot="3" aria-label="Go to project 4">
-            <span class="cs-carousel__dot-progress"></span>
-          </button>
-          <button class="cs-carousel__dot" data-dot="4" aria-label="Go to project 5">
-            <span class="cs-carousel__dot-progress"></span>
+          <button class="cs-carousel__arrow cs-carousel__arrow--next" id="csCarouselNext" aria-label="Next project">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
           </button>
         </div>
 

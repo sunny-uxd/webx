@@ -1133,42 +1133,45 @@ button {
   }
 }
 
-/* ----- Navigation Arrows ----- */
+/* ----- Carousel Controls Bar (Prev, Dots, Next) ----- */
+
+.cs-carousel__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 2vw, 1.8rem);
+  padding-top: clamp(2rem, 3.5vh, 3.2rem);
+  position: relative;
+  z-index: 10;
+}
 
 .cs-carousel__arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  width: 50px;
-  height: 50px;
+  position: static;
+  transform: none;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #ffffff;
   cursor: pointer;
-  transition: background 0.3s ease,
-              border-color 0.3s ease,
-              transform 0.3s ease;
-}
-
-.cs-carousel__arrow--prev {
-  left: var(--gutter);
-}
-
-.cs-carousel__arrow--next {
-  right: var(--gutter);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
 }
 
 .cs-carousel__arrow:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.35);
-  transform: translateY(-50%) scale(1.08);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.08);
+}
+
+.cs-carousel__arrow:active {
+  transform: scale(0.96);
 }
 
 /* ----- Dot Indicators with Autoplay Progress ----- */
@@ -1178,7 +1181,7 @@ button {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  padding-top: clamp(2rem, 3vh, 3rem);
+  padding-top: 0;
   position: relative;
   z-index: 10;
 }
@@ -2163,8 +2166,8 @@ button {
   }
 
   .cs-carousel__arrow {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
   }
 
   /* Testimonials — Tablet */
@@ -2402,14 +2405,6 @@ button {
   .cs-carousel__arrow {
     width: 38px;
     height: 38px;
-  }
-
-  .cs-carousel__arrow--prev {
-    left: 0.75rem;
-  }
-
-  .cs-carousel__arrow--next {
-    right: 0.75rem;
   }
 
   .cs-carousel__track {
