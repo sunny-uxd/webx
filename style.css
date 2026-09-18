@@ -2059,8 +2059,9 @@ button {
 }
 
 .footer__inner {
-  max-width: var(--max-width);
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
