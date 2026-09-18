@@ -700,6 +700,7 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 100%;
 }
 
 .svc-card__desc {
@@ -709,7 +710,8 @@ button {
   color: #555555;
   line-height: 1.7;
   letter-spacing: -0.01em;
-  max-width: 500px;
+  width: 100%;
+  max-width: 100%;
   margin-bottom: clamp(1.6rem, 2.8vh, 2.2rem);
 }
 
