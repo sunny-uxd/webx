@@ -1063,7 +1063,9 @@
           setTimeout(function () {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalHtml;
-          }, 6000);
+            statusBox.className = 'contact-form__status';
+            statusBox.textContent = '';
+          }, 10000);
         })
         .catch(function (error) {
           console.warn('FormSubmit AJAX fallback triggered:', error);
